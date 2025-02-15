@@ -1,0 +1,44 @@
+.container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.task-input {
+    margin-bottom: 15px;
+}
+
+input {
+    padding: 8px;
+    width: 200px;
+    margin-right: 10px;
+}
+
+button {
+    padding: 8px 12px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    font-size: 18px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin: 5px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+li:hover {
+    background: #f5f5f5;
+}
