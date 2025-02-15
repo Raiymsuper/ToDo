@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"embed"
 	"log"
+	"os"
+	"path/filepath"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -17,8 +19,18 @@ var assets embed.FS
 var db *sql.DB
 
 func InitDB() {
+	// Определяем путь к файлу базы данных в корне проекта
+	wd, _ := os.Getwd()
+	dbPath := filepath.Join(wd, "tasks.db")
+
+	// Проверяем, существует ли база данных
+	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
+		log.Fatal("Database file not found:", dbPath)
+	}
+
+	// Открываем существующую базу данных (НЕ создаём новую)
 	var err error
-	db, err = sql.Open("sqlite", "./tasks.db")
+	db, err = sql.Open("sqlite", dbPath+"?_foreign_keys=on")
 	if err != nil {
 		log.Fatal("Failed to open database:", err)
 	}
