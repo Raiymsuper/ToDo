@@ -6,30 +6,25 @@ import (
 	"log"
 )
 
-// App struct with DB connection
 type App struct {
 	ctx context.Context
 	db  *sql.DB
 }
 
-// ✅ NewApp now accepts `db` and stores it
 func NewApp(db *sql.DB) *App {
 	return &App{db: db}
 }
 
-// startup is called when the app starts
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
-// Task struct
 type todos struct {
 	Id     int
 	Task   string
 	Status bool
 }
 
-// ✅ Corrected Insert function
 func (a *App) Insert(c *todos) (int64, error) {
 	if a.db == nil {
 		log.Println("❌ Database is NOT initialized")
@@ -79,12 +74,12 @@ func (a *App) ToggleStatus(id int) error {
 	return err
 }
 
-// func CreateTable(db *sql.DB) (sql.Result, error) {
-// 	sql := `CREATE TABLE IF NOT EXISTS todos (
-// 		id INTEGER PRIMARY KEY,
-// 		task     TEXT NOT NULL,
-// 		status Boolean DEFAULT FALSE
-//     );`
+func CreateTable(db *sql.DB) (sql.Result, error) {
+	sql := `CREATE TABLE IF NOT EXISTS todos (
+		id INTEGER PRIMARY KEY,
+		task     TEXT NOT NULL,
+		status Boolean DEFAULT FALSE
+    );`
 
-// 	return db.Exec(sql)
-// }
+	return db.Exec(sql)
+}
