@@ -19,28 +19,45 @@ var assets embed.FS
 var db *sql.DB
 
 func InitDB() {
-	// Определяем путь к файлу базы данных в корне проекта
-	wd, _ := os.Getwd()
-	dbPath := filepath.Join(wd, "tasks.db")
-
-	// Проверяем, существует ли база данных
-	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
-		log.Fatal("Database file not found:", dbPath)
+	execPath, err := os.Executable()
+	if err != nil {
+		log.Fatal("Failed to get executable path:", err)
 	}
 
-	// Открываем существующую базу данных (НЕ создаём новую)
-	var err error
+	execDir := filepath.Dir(execPath)
+
+	dbPath := filepath.Join(execDir, "tasks.db")
+
+	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
+		log.Println("Database not found, copying from project root...")
+
+		projectDbPath := "tasks.db"
+		err = copyFile(projectDbPath, dbPath)
+		if err != nil {
+			log.Fatal("Failed to copy database file:", err)
+		}
+	}
+
+	// Открываем БД
 	db, err = sql.Open("sqlite", dbPath+"?_foreign_keys=on")
 	if err != nil {
 		log.Fatal("Failed to open database:", err)
 	}
 }
+
+func copyFile(src, dst string) error {
+	input, err := os.ReadFile(src)
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(dst, input, 0644)
+}
+
 func main() {
-	InitDB() // Initialize database first
+	InitDB()
 
-	app := NewApp(db) // Pass `db` to App
+	app := NewApp(db)
 
-	// Create application with options
 	err := wails.Run(&options.App{
 		Title:  "todo",
 		Width:  1024,
